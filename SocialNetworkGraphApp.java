@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Random;
 import javax.imageio.ImageIO;
 
+// Define a class for representing a person in the social network
 class Person {
     private int x;
     private int y;
@@ -16,6 +17,7 @@ class Person {
     private Image image;
 
     public Person(int x, int y, int radius, String name, int followers, Image image) {
+        // Constructor to initialize person properties
         this.x = x;
         this.y = y;
         this.radius = radius;
@@ -24,6 +26,7 @@ class Person {
         this.image = image;
     }
 
+    // Getter and setter methods for person properties
     public int getX() {
         return x;
     }
@@ -57,6 +60,7 @@ class Person {
     }
 }
 
+// Class representing an edge between two people
 class Edge {
     private Person from;
     private Person to;
@@ -64,12 +68,14 @@ class Edge {
     private int streakValue;
 
     public Edge(Person from, Person to) {
+        // Constructor to initialize edge properties
         this.from = from;
         this.to = to;
         this.streak = false;
         this.streakValue = 0;
     }
 
+    // Getter and setter methods for edge properties
     public Person getFrom() {
         return from;
     }
@@ -95,6 +101,7 @@ class Edge {
     }
 }
 
+// the main application class that extends JFrame
 public class SocialNetworkGraphApp extends JFrame {
     private JPanel canvas;
     private JButton addButton;
@@ -110,6 +117,7 @@ public class SocialNetworkGraphApp extends JFrame {
     private Random random;
 
     public SocialNetworkGraphApp() {
+        // Initialize application components and properties
         random = new Random();
         people = new ArrayList<>();
         edges = new ArrayList<>();
@@ -119,6 +127,7 @@ public class SocialNetworkGraphApp extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
+                // Draw edges between people
                 for (Edge edge : edges) {
                     Person from = edge.getFrom();
                     Person to = edge.getTo();
@@ -133,6 +142,7 @@ public class SocialNetworkGraphApp extends JFrame {
                         g.drawString(streakValue, centerX, centerY);
                     }
                 }
+                // Draw people nodes and their information
                 for (Person person : people) {
                     Image personImage = person.getImage();
                     g.drawImage(personImage, person.getX() - person.getRadius(), person.getY() - person.getRadius(),
@@ -151,10 +161,12 @@ public class SocialNetworkGraphApp extends JFrame {
             }
         };
 
+        // Initialize buttons and action listeners
         addButton = new JButton("Add Person");
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Display a dialog to input person details
                 JTextField nameField = new JTextField(10);
                 JTextField followersField = new JTextField(10);
                 JTextField imagePathField = new JTextField(20);
@@ -201,8 +213,8 @@ public class SocialNetworkGraphApp extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (selectedPerson != null) {
+                    // Delete the selected person and associated edges
                     people.remove(selectedPerson);
-                    // Remove connected edges involving the deleted person
                     edges.removeIf(edge -> edge.getFrom() == selectedPerson || edge.getTo() == selectedPerson);
                     selectedPerson = null;
                     canvas.repaint();
@@ -214,6 +226,7 @@ public class SocialNetworkGraphApp extends JFrame {
         edgeToggleButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Toggle edge creation mode
                 connecting = edgeToggleButton.isSelected();
                 if (!connecting) {
                     fromPerson = null;
@@ -226,6 +239,7 @@ public class SocialNetworkGraphApp extends JFrame {
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Search for a person by name
                 String searchTerm = searchField.getText().toLowerCase();
                 selectedPerson = null;
 
@@ -243,7 +257,9 @@ public class SocialNetworkGraphApp extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (connecting) {
+                    // Handle mouse clicks on canvas
                     if (fromPerson == null) {
+                        // Select the starting person for edge creation
                         for (Person person : people) {
                             int distanceSquared = (e.getX() - person.getX()) * (e.getX() - person.getX()) +
                                     (e.getY() - person.getY()) * (e.getY() - person.getY());
@@ -255,6 +271,7 @@ public class SocialNetworkGraphApp extends JFrame {
                             }
                         }
                     } else {
+                        // Select the ending person for edge creation
                         for (Person person : people) {
                             int distanceSquared = (e.getX() - person.getX()) * (e.getX() - person.getX()) +
                                     (e.getY() - person.getY()) * (e.getY() - person.getY());
@@ -284,6 +301,7 @@ public class SocialNetworkGraphApp extends JFrame {
                         }
                     }
                 } else {
+                    // Select a person when not in edge creation mode
                     for (int i = people.size() - 1; i >= 0; i--) {
                         Person person = people.get(i);
                         int distanceSquared = (e.getX() - person.getX()) * (e.getX() - person.getX()) +
@@ -301,6 +319,7 @@ public class SocialNetworkGraphApp extends JFrame {
 
         canvas.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
+            // Move the selected person when dragging
             public void mouseDragged(MouseEvent e) {
                 if (selectedPerson != null) {
                     selectedPerson.setX(e.getX());
@@ -311,6 +330,7 @@ public class SocialNetworkGraphApp extends JFrame {
         });
         setLayout(new BorderLayout());
 
+        // Create the top panel with buttons and search functionality
         JPanel topPanel = new JPanel();
         topPanel.add(addButton);
         topPanel.add(deleteButton);
@@ -327,6 +347,7 @@ public class SocialNetworkGraphApp extends JFrame {
         setVisible(true);
     }
 
+    // Main application entry point
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
